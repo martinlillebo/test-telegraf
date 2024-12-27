@@ -1,0 +1,26 @@
+networks:
+  testnettverk:
+    driver: bridge
+    external: true
+
+services:
+
+  telegraf:
+    image: telegraf:latest
+    container_name: telegraf
+    environment:
+      - INFLUXDB_URL=http://influxdb2:8086
+#      - INFLUXDB_TOKEN=/run/secrets/influxdb2-admin-token
+#      - INFLUXDB_TOKEN="MyInitialAdminToken0=="
+      - INFLUXDB_TOKEN="ZNLDlJDPLNwYVjR0cUBm9XA0hA8KFZu9qwpfIA4OHKHVmqdB8WIaYRRpRIXeqsHjWHPV92cOQdpf-lMUxosbTQ==""
+    secrets:
+      - influxdb2-admin-token
+    volumes:
+      - ./telegraf.conf:/etc/telegraf/telegraf.conf
+    networks:
+      - testnettverk
+    restart: unless-stopped
+
+secrets:
+  influxdb2-admin-token:
+    file: ~/.env.influxdb2-admin-token
